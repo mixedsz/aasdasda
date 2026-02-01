@@ -5,8 +5,17 @@ import sys
 import time
 import readchar
 import hashlib
+import ssl
+import aiohttp
 from time import sleep
 from datetime import datetime, UTC
+
+# SSL certificate handling for aiohttp
+try:
+    import certifi
+    SSL_CERT_FILE = certifi.where()
+except ImportError:
+    SSL_CERT_FILE = None
 
 
 try:
@@ -202,9 +211,17 @@ async def main_program():
     # Display title again at the beginning of the main process
     display_title()
 
-    # Initialize Discord client
+    # Create SSL context with proper certificate handling
+    ssl_context = ssl.create_default_context()
+    if SSL_CERT_FILE:
+        ssl_context.load_verify_locations(SSL_CERT_FILE)
+
+    # Create custom aiohttp connector with SSL context
+    connector = aiohttp.TCPConnector(ssl=ssl_context)
+
+    # Initialize Discord client with custom connector
     intents = discord.Intents.default()
-    client = discord.Client(intents=intents)
+    client = discord.Client(intents=intents, connector=connector)
 
     # Loop until valid token and server IDs are provided
     while True:

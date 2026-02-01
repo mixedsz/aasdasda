@@ -9,3 +9,5 @@ requests
 art
 datetime
 readchar
+aiohttp
+certifi
