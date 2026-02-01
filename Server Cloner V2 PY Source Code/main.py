@@ -1,14 +1,22 @@
-from keyauth import api
 import os
-import logging
 import sys
 import time
-import readchar
-import hashlib
 import ssl
 import aiohttp
-from time import sleep
-from datetime import datetime, UTC
+import platform
+import discord
+import inquirer
+import psutil
+from art import text2art
+from helpmodule import Clone
+from colorama import Fore, Style
+from rich.console import Console
+from rich.panel import Panel
+from rich.text import Text
+from rich.progress import Progress
+import asyncio
+import traceback
+import ctypes
 
 # SSL certificate handling for aiohttp
 try:
@@ -16,77 +24,6 @@ try:
     SSL_CERT_FILE = certifi.where()
 except ImportError:
     SSL_CERT_FILE = None
-
-
-try:
-    import platform
-    import discord
-    import inquirer
-    import psutil
-    from art import text2art
-    from helpmodule import Clone
-    from colorama import Fore, Style
-    from rich.console import Console
-    from rich.panel import Panel
-    from rich.text import Text
-    from rich.progress import Progress
-    from rich.table import Table
-    import asyncio
-    import traceback
-    from pytz import UTC
-    import ctypes
-except ImportError as e:
-    print(f"{Fore.RED}Missing required library: {e.name}. Please install it using pip.{Style.RESET_ALL}")
-    sys.exit(1)
-
-# ✅ Function to clear the console
-def clear():
-    os.system('cls' if os.name == 'nt' else 'clear')
-
-# ✅ Get checksum of the executable for validation
-def getchecksum():
-    md5_hash = hashlib.md5()
-    with open(sys.argv[0], "rb") as file:
-        md5_hash.update(file.read())
-    return md5_hash.hexdigest()
-
-keyauthapp = api(
-    name = "Reliant Server Cloner", # App name 
-    ownerid = "Bv200ABmNA", # Account ID
-    version = "1.0", # Application version. Used for automatic downloads see video here https://www.youtube.com/watch?v=kW195PLCBKs
-    hash_to_check = getchecksum()
-)
-
-# ✅ Path for license storage
-LICENSE_FILE = "license.txt"
-
-def login_with_license():
-    """ Handles license-only login and saves the license key. """
-    clear()
-    
-    # ✅ Check if license.txt exists
-    if os.path.exists(LICENSE_FILE):
-        with open(LICENSE_FILE, "r") as file:
-            license_key = file.read().strip()
-        print(f"Using stored license: {license_key}")
-    else:
-        license_key = input("Enter your license key: ").strip()
-    
-    # ✅ Attempt to login
-    try:
-        keyauthapp.license(license_key)
-        print("\n✅ Login successful!")
-        
-        # ✅ Save license key if it's new
-        with open(LICENSE_FILE, "w") as file:
-            file.write(license_key)
-    
-    except Exception as e:
-        print(f"\n❌ Login failed: {e}")
-        if os.path.exists(LICENSE_FILE):
-            os.remove(LICENSE_FILE)  # ✅ Remove invalid license
-        time.sleep(2)
-        login_with_license()  # ✅ Retry
 
 
 def clear():
@@ -292,10 +229,7 @@ async def main_program():
         restart()
 
 
-# Run the login function
-login_with_license()
-
-# After successful login, execute the main functionality
+# Run the main functionality
 asyncio.run(main_program())
 
 # Prevent the script from instantly closing
