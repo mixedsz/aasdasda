@@ -156,9 +156,8 @@ async def main_program():
     # Create custom aiohttp connector with SSL context
     connector = aiohttp.TCPConnector(ssl=ssl_context)
 
-    # Initialize Discord client with custom connector
-    intents = discord.Intents.default()
-    client = discord.Client(intents=intents, connector=connector)
+    # Initialize Discord client with custom connector (no intents needed for self-bot)
+    client = discord.Client(connector=connector)
 
     # Loop until valid token and server IDs are provided
     while True:
