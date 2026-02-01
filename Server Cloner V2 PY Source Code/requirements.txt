@@ -1,0 +1,11 @@
+questionary
+discord.py-self
+rich
+psutil
+pypresence
+colorama
+inquirer
+requests
+art
+datetime
+readchar
